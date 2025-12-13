@@ -1,0 +1,28 @@
+{
+  "general": {
+    "storeName": "Web2Print",
+    "logoText": "WEB2PRINT",
+    "themeColor": "blue",
+    "contactEmail": "sales@printshopkk.com",
+    "contactPhone": "+1 (555) 123-4567",
+    "address": "123 Print Street, Creative City, Design State, 12345",
+    "facebook": "#",
+    "instagram": "#",
+    "twitter": "#"
+  },
+  "hero": {
+    "title": "Print Your Vision\nWith Precision",
+    "subtitle": "High-quality printing materials with sharp edges and premium finishes. Calculate prices instantly and order online.",
+    "buttonText": "Browse Products",
+    "buttonLink": "/products"
+  },
+  "about": {
+    "title": "Page Eight Presents Kinabalu Print Shop.\nSabah's 1st Online Printing Services Platform.",
+    "description": "Why waste the time visiting your printer when online help is at hand? Page Eight brings you the one-stop shop for all your printing needs and more.",
+    "mission": "Our mission is to provide exceptional printing services and products..."
+  },
+  "business": {
+    "operatingHours": "Mon - Fri: 9:00 AM - 6:00 PM\nSat: 9:00 AM - 1:00 PM\nSun: Closed",
+    "registrationNumber": "12345678-A"
+  }
+}

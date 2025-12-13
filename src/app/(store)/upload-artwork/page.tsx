@@ -5,12 +5,76 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChevronLeft, CloudUpload, Info, AlertTriangle, Download } from "lucide-react"
+import { ChevronLeft, CloudUpload, Info, AlertTriangle, Download, X, FileIcon, Check } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useState, useRef, ChangeEvent, DragEvent } from "react"
 
 export default function UploadArtworkPage() {
     const router = useRouter()
+
+    // File State
+    const [files, setFiles] = useState<{ front: File | null, back: File | null }>({
+        front: null,
+        back: null
+    })
+
+    // Preview URLs
+    const [previews, setPreviews] = useState<{ front: string | null, back: string | null }>({
+        front: null,
+        back: null
+    })
+
+    // Hidden Input Refs
+    const frontInputRef = useRef<HTMLInputElement>(null)
+    const backInputRef = useRef<HTMLInputElement>(null)
+
+    const handleFileSelect = (side: 'front' | 'back', file: File) => {
+        // Basic validation (e.g., check type or size if needed)
+        // For now, accept image/pdf
+
+        // Generate Preview if image
+        let previewUrl = null
+        if (file.type.startsWith('image/')) {
+            previewUrl = URL.createObjectURL(file)
+        }
+
+        setFiles(prev => ({ ...prev, [side]: file }))
+        setPreviews(prev => ({ ...prev, [side]: previewUrl }))
+    }
+
+    const onInputChange = (side: 'front' | 'back', e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            handleFileSelect(side, e.target.files[0])
+        }
+    }
+
+    const onDrop = (side: 'front' | 'back', e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleFileSelect(side, e.dataTransfer.files[0])
+        }
+    }
+
+    const onDragOver = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+    }
+
+    const removeFile = (side: 'front' | 'back') => {
+        setFiles(prev => ({ ...prev, [side]: null }))
+
+        // Revoke URL to avoid memory leaks
+        if (previews[side]) {
+            URL.revokeObjectURL(previews[side]!)
+        }
+        setPreviews(prev => ({ ...prev, [side]: null }))
+
+        // Reset input value so same file can be selected again
+        if (side === 'front' && frontInputRef.current) frontInputRef.current.value = ''
+        if (side === 'back' && backInputRef.current) backInputRef.current.value = ''
+    }
 
     return (
         <div className="container py-8 max-w-6xl">
@@ -31,8 +95,9 @@ export default function UploadArtworkPage() {
                     {/* Top Action Bar */}
                     <div className="flex justify-end">
                         <Button
-                            className="bg-black hover:bg-black/90 text-white rounded-full px-6"
+                            className="bg-black hover:bg-black/90 text-white rounded-full px-6 transition-transform active:scale-95"
                             onClick={() => router.push('/upload-artwork/editor')}
+                            disabled={!files.front} // Require at least front page?
                         >
                             Add to Cart →
                         </Button>
@@ -71,27 +136,111 @@ export default function UploadArtworkPage() {
                     {/* Upload Zones */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Front Page */}
-                        <div className="border-2 border-dashed rounded-md p-8 flex flex-col items-center justify-center text-center gap-3 cursor-pointer hover:bg-muted/30 transition-colors min-h-[200px]">
-                            <CloudUpload className="h-8 w-8 text-black" />
-                            <div>
-                                <p className="font-bold text-sm text-black uppercase">Front Page</p>
-                                <p className="text-xs text-black mt-1">
-                                    Drag a file OR <span className="text-black font-bold">Select File</span>
-                                </p>
-                            </div>
-                            <p className="text-[10px] text-black mt-4">150MB max file size</p>
+                        <div
+                            className={`border-2 border-dashed rounded-md p-4 flex flex-col items-center justify-center text-center gap-3 transition-colors min-h-[250px] relative ${files.front ? 'border-primary bg-primary/5' : 'hover:bg-muted/30 cursor-pointer'}`}
+                            onDrop={(e) => onDrop('front', e)}
+                            onDragOver={onDragOver}
+                            onClick={() => !files.front && frontInputRef.current?.click()}
+                        >
+                            <input
+                                type="file"
+                                className="hidden"
+                                ref={frontInputRef}
+                                onChange={(e) => onInputChange('front', e)}
+                                accept="image/*,.pdf"
+                            />
+
+                            {files.front ? (
+                                <div className="w-full h-full flex flex-col items-center justify-center relative animate-in fade-in zoom-in-95 duration-300">
+                                    <Button
+                                        size="icon"
+                                        variant="destructive"
+                                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                                        onClick={(e) => { e.stopPropagation(); removeFile('front'); }}
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </Button>
+
+                                    {previews.front ? (
+                                        <div className="relative w-full h-32 mb-3 bg-white shadow-sm border rounded overflow-hidden">
+                                            <img src={previews.front} className="w-full h-full object-contain" alt="Front Preview" />
+                                        </div>
+                                    ) : (
+                                        <FileIcon className="h-12 w-12 text-primary mb-3" />
+                                    )}
+
+                                    <p className="font-bold text-sm text-black truncate max-w-[200px]">{files.front.name}</p>
+                                    <p className="text-[10px] text-muted-foreground">{(files.front.size / 1024 / 1024).toFixed(2)} MB</p>
+                                    <div className="flex items-center gap-1 text-xs text-green-600 font-bold mt-2">
+                                        <Check className="h-3 w-3" /> Uploaded
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <CloudUpload className="h-8 w-8 text-black" />
+                                    <div>
+                                        <p className="font-bold text-sm text-black uppercase">Front Page</p>
+                                        <p className="text-xs text-black mt-1">
+                                            Drag a file OR <span className="text-black font-bold">Select File</span>
+                                        </p>
+                                    </div>
+                                    <p className="text-[10px] text-black mt-4">150MB max file size</p>
+                                </>
+                            )}
                         </div>
 
                         {/* Back Page */}
-                        <div className="border-2 border-dashed rounded-md p-8 flex flex-col items-center justify-center text-center gap-3 cursor-pointer hover:bg-muted/30 transition-colors min-h-[200px]">
-                            <CloudUpload className="h-8 w-8 text-black" />
-                            <div>
-                                <p className="font-bold text-sm text-black uppercase">Back Page</p>
-                                <p className="text-xs text-black mt-1">
-                                    Drag a file OR <span className="text-black font-bold">Select File</span>
-                                </p>
-                            </div>
-                            <p className="text-[10px] text-black mt-4">150MB max file size</p>
+                        <div
+                            className={`border-2 border-dashed rounded-md p-4 flex flex-col items-center justify-center text-center gap-3 transition-colors min-h-[250px] relative ${files.back ? 'border-primary bg-primary/5' : 'hover:bg-muted/30 cursor-pointer'}`}
+                            onDrop={(e) => onDrop('back', e)}
+                            onDragOver={onDragOver}
+                            onClick={() => !files.back && backInputRef.current?.click()}
+                        >
+                            <input
+                                type="file"
+                                className="hidden"
+                                ref={backInputRef}
+                                onChange={(e) => onInputChange('back', e)}
+                                accept="image/*,.pdf"
+                            />
+
+                            {files.back ? (
+                                <div className="w-full h-full flex flex-col items-center justify-center relative animate-in fade-in zoom-in-95 duration-300">
+                                    <Button
+                                        size="icon"
+                                        variant="destructive"
+                                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                                        onClick={(e) => { e.stopPropagation(); removeFile('back'); }}
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </Button>
+
+                                    {previews.back ? (
+                                        <div className="relative w-full h-32 mb-3 bg-white shadow-sm border rounded overflow-hidden">
+                                            <img src={previews.back} className="w-full h-full object-contain" alt="Back Preview" />
+                                        </div>
+                                    ) : (
+                                        <FileIcon className="h-12 w-12 text-primary mb-3" />
+                                    )}
+
+                                    <p className="font-bold text-sm text-black truncate max-w-[200px]">{files.back.name}</p>
+                                    <p className="text-[10px] text-muted-foreground">{(files.back.size / 1024 / 1024).toFixed(2)} MB</p>
+                                    <div className="flex items-center gap-1 text-xs text-green-600 font-bold mt-2">
+                                        <Check className="h-3 w-3" /> Uploaded
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <CloudUpload className="h-8 w-8 text-black" />
+                                    <div>
+                                        <p className="font-bold text-sm text-black uppercase">Back Page</p>
+                                        <p className="text-xs text-black mt-1">
+                                            Drag a file OR <span className="text-black font-bold">Select File</span>
+                                        </p>
+                                    </div>
+                                    <p className="text-[10px] text-black mt-4">150MB max file size</p>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,17 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/settings/route": "/api/settings",
+  "/customers/[id]/page": "/customers/[id]",
+  "/customers/new/page": "/customers/new",
+  "/customers/page": "/customers",
+  "/orders/[id]/print/page": "/orders/[id]/print",
+  "/orders/new/page": "/orders/new",
+  "/orders/page": "/orders",
+  "/page": "/",
+  "/products/[id]/page": "/products/[id]",
+  "/products/new/page": "/products/new",
+  "/products/page": "/products",
+  "/promotions/page": "/promotions",
+  "/settings/page": "/settings"
+}

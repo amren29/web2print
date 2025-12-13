@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+import settings from "@/config/site-settings.json";
+
 export default function HomePage() {
     return (
         <div className="flex flex-col gap-16">
@@ -10,20 +12,18 @@ export default function HomePage() {
                 <div className="container">
                     <div className="flex flex-col items-center gap-4 text-center">
                         <div className="inline-flex items-center border bg-background px-3 py-1 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-                            Premium Printing Services
+                            {settings.general.storeName}
                         </div>
-                        <h1 className="text-4xl font-extrabold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl uppercase">
-                            Print Your Vision <br className="hidden sm:inline" />
-                            With Precision
+                        <h1 className="text-4xl font-extrabold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl uppercase whitespace-pre-line">
+                            {settings.hero.title}
                         </h1>
-                        <p className="max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                            High-quality printing materials with sharp edges and premium finishes.
-                            Calculate prices instantly and order online.
+                        <p className="max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed whitespace-pre-line">
+                            {settings.hero.subtitle}
                         </p>
                         <div className="flex flex-col gap-2 min-[400px]:flex-row pt-8">
-                            <Link href="/products">
+                            <Link href={settings.hero.buttonLink || "/products"}>
                                 <Button size="lg" className="h-12 px-8 text-base">
-                                    Browse Products <ArrowRight className="ml-2 h-4 w-4" />
+                                    {settings.hero.buttonText} <ArrowRight className="ml-2 h-4 w-4" />
                                 </Button>
                             </Link>
                             <Link href="/about">

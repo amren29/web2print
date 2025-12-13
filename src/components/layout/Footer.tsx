@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Facebook, Instagram, Twitter, MapPin, Phone, Mail } from "lucide-react";
+import settings from "@/config/site-settings.json";
 
 export function Footer() {
     return (
@@ -9,20 +10,20 @@ export function Footer() {
 
                     {/* Column 1: Brand */}
                     <div className="space-y-4">
-                        <h3 className="text-xl font-bold tracking-tight uppercase">Print Shop KK</h3>
+                        <h3 className="text-xl font-bold tracking-tight uppercase">{settings.general.storeName}</h3>
                         <p className="text-sm text-muted-foreground">
-                            Your trusted partner for high-quality printing solutions. Dedicated to excellence since 2009.
+                            Your trusted partner for high-quality printing solutions. Dedicated to excellence.
                         </p>
                         <div className="flex space-x-4">
-                            <Link href="#" className="text-muted-foreground hover:text-foreground">
+                            <Link href={settings.general.facebook || "#"} className="text-muted-foreground hover:text-foreground">
                                 <Facebook className="h-5 w-5" />
                                 <span className="sr-only">Facebook</span>
                             </Link>
-                            <Link href="#" className="text-muted-foreground hover:text-foreground">
+                            <Link href={settings.general.instagram || "#"} className="text-muted-foreground hover:text-foreground">
                                 <Instagram className="h-5 w-5" />
                                 <span className="sr-only">Instagram</span>
                             </Link>
-                            <Link href="#" className="text-muted-foreground hover:text-foreground">
+                            <Link href={settings.general.twitter || "#"} className="text-muted-foreground hover:text-foreground">
                                 <Twitter className="h-5 w-5" />
                                 <span className="sr-only">Twitter</span>
                             </Link>
@@ -57,15 +58,15 @@ export function Footer() {
                         <ul className="space-y-3 text-sm text-muted-foreground">
                             <li className="flex items-start gap-3">
                                 <MapPin className="h-5 w-5 shrink-0" />
-                                <span>123 Print Street, Creative City, Design State, 12345</span>
+                                <span className="whitespace-pre-line">{settings.general.address}</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Phone className="h-5 w-5 shrink-0" />
-                                <span>+1 (555) 123-4567</span>
+                                <span>{settings.general.contactPhone}</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Mail className="h-5 w-5 shrink-0" />
-                                <span>sales@printshopkk.com</span>
+                                <span>{settings.general.contactEmail}</span>
                             </li>
                         </ul>
                     </div>
@@ -73,7 +74,11 @@ export function Footer() {
                 </div>
 
                 <div className="mt-12 border-t pt-8 text-center text-xs text-muted-foreground">
-                    <p>&copy; {new Date().getFullYear()} Print Shop KK (EICI PRINT SDN BHD). All rights reserved.</p>
+                    <p>
+                        &copy; {new Date().getFullYear()} {settings.general.storeName}
+                        {settings.business?.registrationNumber && <span> ({settings.business.registrationNumber})</span>}
+                        . All rights reserved.
+                    </p>
                 </div>
             </div>
         </footer>

@@ -4,6 +4,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Mail, MapPin, Phone } from "lucide-react"
 
+import settings from "@/config/site-settings.json";
+
 export default function ContactPage() {
     return (
         <div className="container py-12 lg:py-16 space-y-12">
@@ -52,40 +54,30 @@ export default function ContactPage() {
                             <div className="flex gap-3">
                                 <MapPin className="h-5 w-5 text-black flex-shrink-0" />
                                 <div className="space-y-0.5">
-                                    <p className="font-semibold text-sm text-black">Print Shop KK (EICI PRINT SDN BHD)</p>
-                                    <p className="text-xs text-black leading-relaxed">
-                                        123 Print Street, Industrial Park<br />
-                                        88400 Kota Kinabalu, Sabah<br />
-                                        Malaysia
+                                    <p className="font-semibold text-sm text-black">
+                                        {settings.general.storeName}
+                                        {settings.business?.registrationNumber && <span className="font-normal text-muted-foreground ml-1">({settings.business.registrationNumber})</span>}
+                                    </p>
+                                    <p className="text-xs text-black leading-relaxed whitespace-pre-line">
+                                        {settings.general.address}
                                     </p>
                                 </div>
                             </div>
                             <div className="flex gap-3 items-center">
                                 <Phone className="h-4 w-4 text-black flex-shrink-0" />
-                                <p className="text-sm text-black">+60 12-345 6789</p>
+                                <p className="text-sm text-black">{settings.general.contactPhone}</p>
                             </div>
                             <div className="flex gap-3 items-center">
                                 <Mail className="h-4 w-4 text-black flex-shrink-0" />
-                                <p className="text-sm text-black">hello@web2print.com.my</p>
+                                <p className="text-sm text-black">{settings.general.contactEmail}</p>
                             </div>
                         </div>
                     </div>
 
                     <div className="space-y-4">
                         <h3 className="font-bold text-lg uppercase border-b pb-2 text-black">Business Hours</h3>
-                        <div className="grid grid-cols-2 gap-4 text-xs">
-                            <div className="space-y-0.5">
-                                <p className="font-semibold text-black">Monday - Friday</p>
-                                <p className="text-black">9:00 AM - 6:00 PM</p>
-                            </div>
-                            <div className="space-y-0.5">
-                                <p className="font-semibold text-black">Saturday</p>
-                                <p className="text-black">9:00 AM - 1:00 PM</p>
-                            </div>
-                            <div className="space-y-0.5">
-                                <p className="font-semibold text-black">Sunday</p>
-                                <p className="text-black">Closed</p>
-                            </div>
+                        <div className="text-sm text-black whitespace-pre-line leading-relaxed">
+                            {settings.business?.operatingHours || "Contact us for operating hours."}
                         </div>
                     </div>
                 </div>

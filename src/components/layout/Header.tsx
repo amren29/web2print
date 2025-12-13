@@ -7,6 +7,8 @@ import { ShoppingBag, Search, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import settings from "@/config/site-settings.json";
+
 export function Header() {
     const router = useRouter()
     const [searchQuery, setSearchQuery] = useState("")
@@ -21,7 +23,11 @@ export function Header() {
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-16 items-center">
                 <Link href="/" className="mr-6 flex items-center space-x-2">
-                    <span className="text-xl font-bold tracking-tight uppercase">Web2Print</span>
+                    <span
+                        className={`text-xl font-bold tracking-tight uppercase ${settings.general.themeColor === 'red' ? 'text-red-600' : settings.general.themeColor === 'green' ? 'text-green-600' : ''}`}
+                    >
+                        {settings.general.logoText || settings.general.storeName}
+                    </span>
                 </Link>
                 <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
                     <Link href="/products" className="transition-colors hover:text-foreground/80 text-foreground/60">

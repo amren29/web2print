@@ -6,45 +6,14 @@ import { Separator } from "@/components/ui/separator"
 import { Trash2, ShoppingBag, ArrowRight, Minus, Plus } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
+import { useCart } from "@/context/CartContext"
 
 export default function CartPage() {
-    // Mock Cart Data
-    const [cartItems, setCartItems] = useState([
-        {
-            id: 1,
-            name: "Premium Business Cards",
-            specs: "500pcs, Standard Matte, 300gsm, No Finishing",
-            price: 45.00,
-            quantity: 1,
-            image: "IMAGE"
-        },
-        {
-            id: 2,
-            name: "A5 Flyers",
-            specs: "1000pcs, Gloss Art Paper, 128gsm",
-            price: 120.00,
-            quantity: 1,
-            image: "IMAGE"
-        }
-    ])
+    const { items: cartItems, updateQuantity, removeFromCart, cartTotal } = useCart()
 
-    const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0)
+    const subtotal = cartTotal // Items are stored as 1 "Pack" with total price, so sum is correct
     const shipping = 10.80 // Mock shipping
     const total = subtotal + shipping
-
-    const updateQuantity = (id: number, delta: number) => {
-        setCartItems(cartItems.map(item => {
-            if (item.id === id) {
-                const newQty = Math.max(1, item.quantity + delta)
-                return { ...item, quantity: newQty }
-            }
-            return item
-        }))
-    }
-
-    const removeItem = (id: number) => {
-        setCartItems(cartItems.filter(item => item.id !== id))
-    }
 
     return (
         <div className="container py-12 lg:py-16">
@@ -84,7 +53,7 @@ export default function CartPage() {
                                             <p className="text-sm text-muted-foreground mt-1">{item.specs}</p>
                                         </div>
                                         <button
-                                            onClick={() => removeItem(item.id)}
+                                            onClick={() => removeFromCart(item.id)}
                                             className="text-muted-foreground hover:text-destructive transition-colors"
                                         >
                                             <Trash2 className="h-4 w-4" />
