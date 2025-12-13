@@ -180,7 +180,7 @@ export default function ProductPage() {
 
         // Fetch product from localStorage
         const savedProducts = localStorage.getItem("web2print_products");
-        let products = [];
+        let products: any[] = [];
 
         if (savedProducts) {
             products = JSON.parse(savedProducts);
